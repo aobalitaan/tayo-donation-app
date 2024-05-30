@@ -12,6 +12,10 @@ class DonationProvider with ChangeNotifier {
   Donation? get donation => _donation;
   Stream<List<Donation>> get donationStream => _donationStream;
 
+  // Store donations as a class-level variable
+  List<Donation> _donations = [];
+  List<Donation> get donations => _donations;
+
    void setDonationId(String donationId) {
     _subscription?.cancel();
     _subscription = firebaseService.getDonationInfo(donationId).listen((donation) {
@@ -19,10 +23,32 @@ class DonationProvider with ChangeNotifier {
       notifyListeners();
     });
   }
+ void fetchDonationsGivenProfile(String? uid) {
+    try {
+      if (uid != null) {
+        // Fetch donations from Firebase if uid is not null
+        _donationStream = firebaseService.fetchDonationsGiven(uid);
 
-  
+        // Update local donations array when there are changes in the stream
+        _donationStream.listen((newDonations) {
+          _donations = newDonations; // Update class-level variable
+          notifyListeners();
+        });
+      } else {
+        // If uid is null, clear the stream and donations array
+        _donationStream = Stream.empty();
+        _donations.clear();
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error fetching donations: $e');
+      _donationStream = Stream.empty();
+      _donations.clear();
+      notifyListeners();
+    }
+  }
 
-  void fetchDonationsGiven(String? uid) {
+    void fetchDonationsGiven(String? uid) {
     try {
       _donationStream = Stream.empty();
       if (uid != null) {_donationStream = firebaseService.fetchDonationsGiven(uid);};

@@ -31,7 +31,7 @@ class _DonorDetailsState extends State<DonorDetails> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().getAccountInfo(widget.uid!);
-      Provider.of<DonationProvider>(context, listen: false).fetchDonationsGiven(widget.uid);
+      Provider.of<DonationProvider>(context, listen: false).fetchDonationsGivenProfile(widget.uid);
     });
   }
 
@@ -76,61 +76,51 @@ class _DonorDetailsState extends State<DonorDetails> {
           ),
         );
   }
-
-  Widget donationsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 15),
-          Text(
-            "Donations",
-            style: TextStyle(
-              color: Styles.mainBlue,
-    
-            ),
-          ),
-          const SizedBox(height: 5),
-
-        Consumer<DonationProvider>(
-          builder: (context, donationProvider, child) {
-            return StreamBuilder<List<Donation>>(
-              stream: donationProvider.donationStream,
+Widget donationsSection() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      const SizedBox(height: 15),
+      Text(
+        "Donations",
+        style: TextStyle(
+          color: Styles.mainBlue,
+        ),
+      ),
+      const SizedBox(height: 5),
+      Consumer<DonationProvider>(
+        builder: (context, donationProvider, child) {
+          final donations = donationProvider.donations; // Get the array of donations
+          if (donations.isEmpty) {
+            return Center(
+              child: Text('No donations found', style: TextStyle(color: Styles.darkerGray)),
+            );
+          } else {
+            return FutureBuilder<List<Widget>>(
+              future: _buildDonationTiles(donations),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No donations found', style: TextStyle(color: Styles.darkerGray)));
                 } else {
-                  final donations = snapshot.data!;
-                  return FutureBuilder<List<Widget>>(
-                    future: _buildDonationTiles(donations),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else {
-                        final donationTiles = snapshot.data!;
-                        return ListView(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.zero,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: donationTiles,
-                        );
-                      }
-                    },
+                  final donationTiles = snapshot.data!;
+                  return ListView(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: donationTiles,
                   );
                 }
               },
             );
-          },
-        ),
+          }
+        },
+      ),
+    ],
+  );
+}
 
-      ],
-    );
-  }
 
   Future<List<Widget>> _buildDonationTiles(List<Donation> donations) async {
   final List<Widget> tiles = [];
