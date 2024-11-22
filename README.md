@@ -1,6 +1,8 @@
 # tayo: An Elbi Donation System Mobile Application
 ### CMSC 23-U4L Project Group 3
 
+![Untitled design](https://github.com/user-attachments/assets/cc217125-a853-4e30-a1d7-31a019046960)
+
 ## Developers
 - Axel Balitaan
 - Nathan Jahziel Muncal
