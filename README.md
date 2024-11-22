@@ -1,5 +1,4 @@
 # tayo: An Elbi Donation System Mobile Application
-### CMSC 23-U4L Project Group 3
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/cc217125-a853-4e30-a1d7-31a019046960" alt="Untitled design" width="300"/>
@@ -20,6 +19,7 @@
 ## Program Description
 
 ### Overview
+#### CMSC 23-U4L Project Group 3
 "Tayo" is a mobile application designed to streamline the donation process within Elbi. Developed using the Flutter framework for the front-end and Firebase for the back-end, this application provides a seamless and efficient platform for managing and facilitating donations. The app supports three distinct user roles: Admin, Organization, and Donor, each with unique functionalities to suit their specific roles.
 
 ## Getting Started
